@@ -3,10 +3,9 @@ import Layout from "../components/layout"
 import SEO from "../components/seo"
 import CodeSnippet from "../components/codeSnippet"
 import ShoppingList from "../components/shoppingList/shoppingList"
-import { StaticQuery, graphql } from "gatsby"
-import Img from "gatsby-image"
 import tokens from "../data/tokens"
 import { css } from "@emotion/core"
+import beer from "../images/boneyard-beer.jpg"
 
 const shoppingListExample = `
 <ShoppingList
@@ -31,8 +30,14 @@ const shoppingListExample = `
   />
   <ShoppingList.Item
     heading="Beer"
-    description="Pilsner or IPA or Hoppy or anything cold."
-  />
+    description="Pilsner, IPA, Stout, Anything cold but look for Boneyard RPM:"
+  >
+    <img src={beer} alt="boneyard IPA" width="60" />
+    <div>
+      <span role="img" aria-label="beer emoji">🍺</span>
+      <span role="img" aria-label="crazy face emoji">🤪</span>
+    </div>
+  </ShoppingList.Item>
   <ShoppingList.Item
     heading="Coffee"
     description="Grounds for pour-over."
@@ -70,22 +75,10 @@ const myShoppingListExample = (
         heading="Beer"
         description="Pilsner, IPA, Stout, Anything cold but look for Boneyard RPM:"
       >
-        <StaticQuery
-          query={graphql`
-            query {
-              placeholderImage: file(relativePath: { eq: "boneyard-beer.jpg" }) {
-                childImageSharp {
-                  fixed(width: 50) {
-                    ...GatsbyImageSharpFixed
-                  }
-                }
-              }
-            }
-          `}
-          render={data => <Img fixed={data.placeholderImage.childImageSharp.fixed} />}
-        />
+        <img src={beer} alt="boneyard IPA" width="60" />
         <div>
-          <span role="img" aria-label="beer emoji">🍺</span><span role="img" aria-label="crazy face emoji">🤪</span>
+          <span role="img" aria-label="beer emoji">🍺</span>
+          <span role="img" aria-label="crazy face emoji">🤪</span>
         </div>
       </ShoppingList.Item>
       <ShoppingList.Item
