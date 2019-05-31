@@ -1,8 +1,9 @@
 import PropTypes from "prop-types"
-import React, { Fragment } from "react"
+import React from "react"
 import tokens from "../../data/tokens"
 import { css } from "@emotion/core"
 import ShoppinListItem from './shoppingListItem'
+import cartLogo from "../../images/cart-logo.png"
 
 class ShoppingList extends React.Component {
   static Item = ShoppinListItem;
@@ -60,6 +61,7 @@ class ShoppingList extends React.Component {
         css={css({
           border: tokens.border.component,
           borderRadius: tokens.border.radius.default,
+          boxShadow: tokens.shadow.default,
           color: tokens.color.text.default,
           fontFamily: tokens.font.family.sansSerif,
           marginBottom: tokens.space.md,
@@ -69,20 +71,24 @@ class ShoppingList extends React.Component {
       >
         <div
           css={css({
+            alignItems: 'center',
+            display: 'flex',
             fontSize: tokens.font.size.lg,
-            margin: 0,
-            padding: tokens.space.sm,
+            padding: tokens.space.md,
           })}
         >
-          <div
+          <img
             css={css({
-              flexGrow: 1,
+              marginRight: tokens.space.md,
+              height: 24,
+              width: 24,
             })}
-          >
-            {heading && (
-              <Fragment>{heading}</Fragment>
-            )}
-          </div>
+            src={cartLogo}
+            alt="CART Logo"
+          />
+          {heading && (
+            <div>{heading}</div>
+          )}
         </div>
         <div
           css={css({
@@ -151,16 +157,54 @@ class ShoppingList extends React.Component {
             </div>
           )}
         </div>
-        <ul
-          css={css({
-            listStyle: 'none',
-            margin: 0,
-            padding: 0,
-          })}
-        >
-          {this.renderDynamicItems()}
-          {children}
-        </ul>
+        {this.renderDynamicItems()}
+        {children ? (
+          <table
+            css={css({
+              borderCollapse: 'collapse',
+              width: '100%',
+            })}
+          >
+            <thead>
+              <tr
+                css={css({
+                  color: tokens.color.text.tertiary,
+                  fontSize: tokens.font.size.sm,
+                  verticalAlign: 'top',
+                })}
+              >
+                <td
+                  css={css({
+                    padding: tokens.space.xs,
+                  })}
+                >
+                  Product
+                </td>
+                <td
+                  css={css({
+                    padding: tokens.space.xs,
+                  })}
+                >
+                  Price
+                </td>
+                <td
+                  css={css({
+                    padding: tokens.space.xs,
+                  })}
+                >
+                  Quantity
+                </td>
+              </tr>
+            </thead>
+            <tbody>
+              {children}
+            </tbody>
+          </table>
+        ) : (
+          <div>
+            Sorry
+          </div>
+        )}
       </div>
     );
   }

@@ -5,91 +5,39 @@ import CodeSnippet from "../components/codeSnippet"
 import ShoppingList from "../components/shoppingList/shoppingList"
 import tokens from "../data/tokens"
 import { css } from "@emotion/core"
-import beer from "../images/boneyard-beer.jpg"
 
 const shoppingListExample = `
 <ShoppingList
-  heading="My Shopping List"
+  name="Shopping List"
 >
-  <ShoppingList.Item
-    heading="Loaf of bread"
-    description="Sour dough or gluton free if they have it."
-  />
-  <ShoppingList.Item
-    heading="Container of milk"
-    description="2% not the low-fat watery stuff."
-    isChecked
-  />
-  <ShoppingList.Item
-    heading="Stick of butter"
-    description="Or ghee if they have it."
-  />
-  <ShoppingList.Item
-    heading="Chips"
-    description="Potato or corn but nothing with onion flavor."
-  />
-  <ShoppingList.Item
-    heading="Beer"
-    description="Pilsner, IPA, Stout, anything cold but look for Boneyard RPM here’s a pic:"
-  >
-    <img src={beer} alt="boneyard IPA" width="60" />
-    <div>
-      <span role="img" aria-label="beer emoji">🍺</span>
-      <span role="img" aria-label="crazy face emoji">🤪</span>
-    </div>
-  </ShoppingList.Item>
-  <ShoppingList.Item
-    heading="Coffee"
-    description="Grounds for pour-over."
-  />
-  <ShoppingList.Item
-    heading="Pickles"
-    description="Dill of course."
-  />
+  
 </ShoppingList>
 `;
 
 
 const myShoppingListExample = (
   <ShoppingList
-      heading="My Shopping List"
-    >
-      <ShoppingList.Item
-        heading="Loaf of bread"
-        description="Sour dough or gluton free if they have it."
-      />
-      <ShoppingList.Item
-        heading="Container of milk"
-        description="2% not the low-fat watery stuff."
-        isChecked
-      />
-      <ShoppingList.Item
-        heading="Stick of butter"
-        description="Or ghee if they have it."
-      />
-      <ShoppingList.Item
-        heading="Chips"
-        description="Potato or corn but nothing with onion flavor."
-      />
-      <ShoppingList.Item
-        heading="Beer"
-        description="Pilsner, IPA, Stout, anything cold but look for Boneyard RPM here’s a pic:"
-      >
-        <img src={beer} alt="boneyard IPA" width="60" />
-        <div>
-          <span role="img" aria-label="beer emoji">🍺</span>
-          <span role="img" aria-label="crazy face emoji">🤪</span>
-        </div>
-      </ShoppingList.Item>
-      <ShoppingList.Item
-        heading="Coffee"
-        description="Grounds for pour-over."
-      />
-      <ShoppingList.Item
-        heading="Pickles"
-        description="Dill of course."
-      />
-    </ShoppingList>
+    heading="Shopping List"
+  >
+    <ShoppingList.Item
+      name="Astro Camping Hat"
+      price={11.99}
+    />
+    <ShoppingList.Item
+      name="Astro Hat - Sizzling Summer Edition"
+      price={8.99}
+      description="One size fits all."
+      inStock={false}
+    />
+    <ShoppingList.Item
+      name="Astro Beanie - White Winter Edition"
+      price={9.99}
+    />
+    <ShoppingList.Item
+      name="Astro Beanie - Splashing Spring Edition"
+      price={10.99}
+    />
+  </ShoppingList>
 )
 
 const IndexPage = () => (
@@ -97,8 +45,8 @@ const IndexPage = () => (
     <SEO title="Home" />
     <h1>Shopping List Component</h1>
     <ul>
-      <li>This component accepts a <code>heading</code> prop and <code>ShoppingList.Item</code> components as children.</li>
-      <li>The <code>ShoppingList.Item</code> component accepts <code>heading</code> and <code>description</code> props as well as any custom children elements.</li>
+      <li>This component accepts a <code>name</code> prop and <code>ShoppingList.Item</code> components as children.</li>
+      <li>The <code>ShoppingList.Item</code> component accepts <code>name</code> and <code>description</code> props as well as any custom children elements.</li>
       <li>Once the <code>X Delete</code> button is clicked the user has 5 seconds to <code>Undo</code> the deletion.</li>
     </ul>
   

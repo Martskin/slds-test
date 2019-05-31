@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import tokens from "../../data/tokens"
 import { css } from "@emotion/core"
+import productDefaultImage from "../../images/product-default-image.jpg"
 
 class ShoppingListItem extends React.Component {
   constructor(props) {
@@ -10,8 +11,10 @@ class ShoppingListItem extends React.Component {
       isDismissing: false,
       isDismissed: false,
       isWaiting: false,
+      quantity: this.props.quantity,
     };
     this.handleButtonDeleteClick = this.handleButtonDeleteClick.bind(this);
+    this.handleInputQuantityChange = this.handleInputQuantityChange.bind(this);
   }
 
   componentWillUnmount() {
@@ -35,14 +38,26 @@ class ShoppingListItem extends React.Component {
     }
   }
 
+  handleInputQuantityChange(event) {
+    let newQuantity = parseFloat(event.target.value);
+    if (newQuantity >= 0) {
+      this.setState({ quantity: newQuantity });
+    }
+  }
+
   render() {
-    const { isDismissing, isDismissed, isWaiting } = this.state;
-    const { isChecked, heading, description, children } = this.props;
+    const { isDismissing, isDismissed, isWaiting, quantity } = this.state;
+    const {
+      inStock,
+      name, 
+      description,
+      price
+    } = this.props;
 
     return (
       <Fragment>
         {!isDismissed && (
-          <li
+          <tr
             css={css({
               borderTop: tokens.border.component,
               margin: 0,
@@ -55,104 +70,127 @@ class ShoppingListItem extends React.Component {
               },
             })}
           >
-            <div
+            <td
               css={css({
-                alignItems: 'center',
-                display: 'flex',
+                padding: `${tokens.space.xs}px ${tokens.space.xs}px ${tokens.space.xs}px 0`,
               })}
             >
-              <div
-                css={css({
-                  flexGrow: 1,
-                  paddingRight: tokens.space.sm,
-                })}
-              >
-                {!isWaiting && (
-                  <div
-                    css={css({
-                      opacity: isDismissing ? 0 : 1,
-                      transition: 'opacity .3s ease-out',
-                    })}
-                  >
-                    <label
+              {!isWaiting && (
+                <div
+                  css={css({
+                    display: 'flex',
+                    opacity: isDismissing ? 0 : 1,
+                    transition: 'opacity .3s ease-out',
+                  })}
+                >
+                  <div>
+                    <img
                       css={css({
-                        cursor: 'pointer',
-                        display: 'block',
-                        width: '100%',
+                        marginRight: tokens.space.md,
+                        height: 50,
+                        width: 50,
+                      })}
+                      src={productDefaultImage}
+                      alt={name}
+                    />
+                  </div>
+                  <div>
+                    <div
+                      css={css({
+                        color: tokens.color.text.secondary,
+                        fontSize: tokens.font.size.md,
+                        fontWeight: 'bold',
+                        marginBottom: tokens.space.xxs,
                       })}
                     >
-                      <input
-                        css={css({
-                          display: 'inline-block',
-                          position: 'absolute',
-                          marginLeft: '-23px',
-                          marginTop: tokens.space.xxs,
-                        })}
-                        type="checkbox"
-                        name={heading}
-                        defaultChecked={isChecked}
-                      />
-                      <span
-                        css={css({
-                          display: 'inline-block',
-                          fontSize: tokens.font.size.md,
-                          fontWeight: 'bold',
-                          margin: `0 0 ${tokens.space.xxs}px`,
-                          'input:checked + &': {
-                            textDecoration: 'line-through',
-                          }
-                        })}
-                      >
-                        {heading}
-                      </span>
-                      <div>
-                          {description && (
-                          <p
+                      {name}
+                    </div>
+                    <div>
+                        {description && (
+                          <div
                             css={css({
+                              color: tokens.color.text.tertiary,
                               margin: 0,
-                              fontSize: tokens.font.size.sm,
-                              '&:not(:last-child)': {
-                                marginBottom: tokens.space.sm,
-                              }
+                              fontSize: tokens.font.size.xs,
+                              marginBottom: tokens.space.xs,
                             })}
                           >
                             {description}
-                          </p>
+                          </div>
                         )}
-                        {children}
-                      </div>
-                    </label>
+                        <div
+                          css={css({
+                            color: tokens.color.text.tertiary,
+                            margin: 0,
+                            fontSize: tokens.font.size.xs,
+                            marginBottom: tokens.space.xs,
+                          })}
+                        >
+                          {inStock ? (
+                            <span css={css({ color: tokens.color.text.success })}>In Stock</span>
+                          ) : (
+                            <span css={css({ color: tokens.color.text.warning })}>Backordered</span>
+                          )}
+                        </div>
+                        <button
+                          css={css({
+                            background: 'transparent',
+                            border: 'none',
+                            color: tokens.color.text.interactive.default,
+                            cursor: 'pointer',
+                            display: 'block',
+                            font: 'inherit',
+                            fontSize: tokens.font.size.sm,
+                            margin: `0 0 ${tokens.space.sm}`,
+                            overflow: 'visible',
+                            padding: 0,
+                            textDecoration: 'none',
+                            whiteSpace: 'nowrap',
+                            width: 'auto',
+                            '&:hover': {
+                              color: isWaiting ? tokens.color.text.success : tokens.color.text.error,
+                              textDecoration: 'underline',
+                            }
+                          })}
+                          onClick={this.handleButtonDeleteClick}
+                        >
+                          {isWaiting ? 'undo' : 'remove'}
+                        </button>
+                    </div>
                   </div>
-                )}
-              </div>
-              <div>
-                <button
-                  css={css({
-                    background: 'transparent',
-                    border: 'none',
-                    color: 'inherit',
-                    cursor: 'pointer',
-                    display: 'block',
-                    font: 'inherit',
-                    fontSize: tokens.font.size.xs,
-                    margin: 0,
-                    overflow: 'visible',
-                    padding: 0,
-                    textDecoration: 'none',
-                    whiteSpace: 'nowrap',
-                    width: 'auto',
-                    '&:hover': {
-                      color: isWaiting ? tokens.color.text.success : tokens.color.text.error,
-                      textDecoration: 'underline',
-                    }
-                  })}
-                  onClick={this.handleButtonDeleteClick}
-                >
-                  {isWaiting ? 'Undo' : 'X Delete'}
-                </button>
-              </div>
-            </div>
-          </li>
+                </div>
+              )}
+            </td>
+            <td
+              css={css({
+                color: tokens.color.text.tertiary,
+                padding: tokens.space.xs,
+                fontSize: tokens.font.size.sm,
+                fontWeight: 'bold',
+              })}
+            >
+              ${(price * quantity).toFixed(2)}
+            </td>
+            <td
+              css={css({
+                padding: tokens.space.xs,
+              })}
+            >
+              <input
+                css={css({
+                  border: tokens.border.component,
+                  borderRadius: tokens.border.radius.default,
+                  fontSize: tokens.font.size.xs,
+                  padding: tokens.space.xxs,
+                  width: tokens.space.lg,
+                })}
+                min="1"
+                type="number"
+                defaultValue={quantity}
+                onChange={this.handleInputQuantityChange}
+              />
+            </td>
+          </tr>
         )}
       </Fragment>
     );
@@ -160,17 +198,19 @@ class ShoppingListItem extends React.Component {
 }
 
 ShoppingListItem.propTypes = {
-  isChecked: PropTypes.bool,
-  heading: PropTypes.string.isRequired,
+  inStock: PropTypes.bool,
+  name: PropTypes.string.isRequired,
   description: PropTypes.string,
-  children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]),
+  price: PropTypes.number,
+  quantity: PropTypes.number
 };
 
 ShoppingListItem.defaultProps = {
-  isChecked: false,
-  heading: undefined,
+  inStock: true,
+  name: undefined,
   description: undefined,
-  children: undefined,
+  price: 0.00,
+  quantity: 1,
 };
 
 export default ShoppingListItem;
