@@ -7,17 +7,36 @@ class ShoppingListItem extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      isDismissing: false,
       isDismissed: false,
+      isWaiting: false,
     };
-    this.handleButtonDismissClick = this.handleButtonDismissClick.bind(this);
+    this.handleButtonDeleteClick = this.handleButtonDeleteClick.bind(this);
   }
 
-  handleButtonDismissClick() {
-    this.setState({ isDismissed: true });
+  componentWillUnmount() {
+    clearTimeout(this.waitingTimout);
+    clearTimeout(this.dismissingTimout);
+  }
+
+  handleButtonDeleteClick() {
+    if (!this.state.isWaiting) {
+      this.setState({ isDismissing: true });
+      this.waitingTimout = setTimeout(() => {
+        this.setState({ isWaiting: true });
+        this.dismissingTimout = setTimeout(() => {
+          this.setState({ isDismissed: true });
+        }, 5000);
+      }, 300);
+    } else {
+      this.setState({ isDismissing: false, isWaiting: false });
+      clearTimeout(this.waitingTimout);
+      clearTimeout(this.dismissingTimout);
+    }
   }
 
   render() {
-    const { isDismissed } = this.state;
+    const { isDismissing, isDismissed, isWaiting } = this.state;
     const { isChecked, heading, description, children } = this.props;
 
     return (
@@ -33,7 +52,7 @@ class ShoppingListItem extends React.Component {
               paddingTop: tokens.space.xs,
               '&:hover': {
                 backgroundColor: tokens.color.background.light,
-              }
+              },
             })}
           >
             <div
@@ -48,54 +67,63 @@ class ShoppingListItem extends React.Component {
                   paddingRight: tokens.space.sm,
                 })}
               >
-                <label
-                  css={css({
-                    cursor: 'pointer',
-                    display: 'block',
-                    width: '100%',
-                  })}
-                >
-                  <input
+                {!isWaiting && (
+                  <div
                     css={css({
-                      display: 'inline-block',
-                      position: 'absolute',
-                      marginLeft: '-23px',
-                      marginTop: tokens.space.xxs,
-                    })}
-                    type="checkbox"
-                    name={heading}
-                    defaultChecked={isChecked}
-                  />
-                  <span
-                    css={css({
-                      display: 'inline-block',
-                      fontSize: tokens.font.size.md,
-                      fontWeight: 'bold',
-                      margin: `0 0 ${tokens.space.xxs}px`,
-                      'input:checked + &': {
-                        textDecoration: 'line-through',
-                      }
+                      opacity: isDismissing ? 0 : 1,
+                      transition: 'opacity .3s ease-out',
                     })}
                   >
-                    {heading}
-                  </span>
-                  <div>
-                      {description && (
-                      <p
+                    <label
+                      css={css({
+                        cursor: 'pointer',
+                        display: 'block',
+                        width: '100%',
+                      })}
+                    >
+                      <input
                         css={css({
-                          margin: 0,
-                          fontSize: tokens.font.size.sm,
-                          '&:not(:last-child)': {
-                            marginBottom: tokens.space.sm,
+                          display: 'inline-block',
+                          position: 'absolute',
+                          marginLeft: '-23px',
+                          marginTop: tokens.space.xxs,
+                        })}
+                        type="checkbox"
+                        name={heading}
+                        defaultChecked={isChecked}
+                      />
+                      <span
+                        css={css({
+                          display: 'inline-block',
+                          fontSize: tokens.font.size.md,
+                          fontWeight: 'bold',
+                          margin: `0 0 ${tokens.space.xxs}px`,
+                          'input:checked + &': {
+                            textDecoration: 'line-through',
                           }
                         })}
                       >
-                        {description}
-                      </p>
-                    )}
-                    {children}
+                        {heading}
+                      </span>
+                      <div>
+                          {description && (
+                          <p
+                            css={css({
+                              margin: 0,
+                              fontSize: tokens.font.size.sm,
+                              '&:not(:last-child)': {
+                                marginBottom: tokens.space.sm,
+                              }
+                            })}
+                          >
+                            {description}
+                          </p>
+                        )}
+                        {children}
+                      </div>
+                    </label>
                   </div>
-                </label>
+                )}
               </div>
               <div>
                 <button
@@ -107,16 +135,20 @@ class ShoppingListItem extends React.Component {
                     display: 'block',
                     font: 'inherit',
                     fontSize: tokens.font.size.xs,
-                    lineHeight: 0,
                     margin: 0,
                     overflow: 'visible',
                     padding: 0,
-                    textDecoration: 'underline',
+                    textDecoration: 'none',
+                    whiteSpace: 'nowrap',
                     width: 'auto',
+                    '&:hover': {
+                      color: isWaiting ? tokens.color.text.success : tokens.color.text.error,
+                      textDecoration: 'underline',
+                    }
                   })}
-                  onClick={this.handleButtonDismissClick}
+                  onClick={this.handleButtonDeleteClick}
                 >
-                  Remove
+                  {isWaiting ? 'Undo' : 'X Delete'}
                 </button>
               </div>
             </div>

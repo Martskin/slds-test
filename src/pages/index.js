@@ -30,7 +30,7 @@ const shoppingListExample = `
   />
   <ShoppingList.Item
     heading="Beer"
-    description="Pilsner, IPA, Stout, Anything cold but look for Boneyard RPM:"
+    description="Pilsner, IPA, Stout, anything cold but look for Boneyard RPM here’s a pic:"
   >
     <img src={beer} alt="boneyard IPA" width="60" />
     <div>
@@ -73,7 +73,7 @@ const myShoppingListExample = (
       />
       <ShoppingList.Item
         heading="Beer"
-        description="Pilsner, IPA, Stout, Anything cold but look for Boneyard RPM:"
+        description="Pilsner, IPA, Stout, anything cold but look for Boneyard RPM here’s a pic:"
       >
         <img src={beer} alt="boneyard IPA" width="60" />
         <div>
@@ -96,9 +96,12 @@ const IndexPage = () => (
   <Layout>
     <SEO title="Home" />
     <h1>Shopping List Component</h1>
-    <p>This component accepts a <code>heading</code> prop and <code>ShoppingList.Item</code> components as children.</p>
-    <p>The <code>ShoppingList.Item</code> component accepts <code>heading</code> and <code>description</code> props as well as any custom children elements.</p>
-
+    <ul>
+      <li>This component accepts a <code>heading</code> prop and <code>ShoppingList.Item</code> components as children.</li>
+      <li>The <code>ShoppingList.Item</code> component accepts <code>heading</code> and <code>description</code> props as well as any custom children elements.</li>
+      <li>Once the <code>X Delete</code> button is clicked the user has 5 seconds to <code>Undo</code> the deletion.</li>
+    </ul>
+  
     <h2>In {tokens.layout.maxWidth.default}px max-width container</h2>
     {myShoppingListExample}
 

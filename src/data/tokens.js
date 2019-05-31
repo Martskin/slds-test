@@ -13,7 +13,8 @@ const base = {
       80: "#808080",
       90: "#303030",
     },
-    red: "#c23934"
+    red: "#c23934",
+    green: "#027e46",
   },
   space: {
     default: 16
@@ -41,6 +42,7 @@ module.exports = {
       default: base.color.neutral[90],
       secondary: base.color.neutral[70],
       error: base.color.red,
+      success: base.color.green,
     },
     background: {
       default: base.color.white,
