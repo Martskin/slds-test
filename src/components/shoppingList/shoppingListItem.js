@@ -29,6 +29,7 @@ class ShoppingListItem extends React.Component {
         this.setState({ isWaiting: true });
         this.dismissingTimout = setTimeout(() => {
           this.setState({ isDismissed: true });
+          this.props.removeItem(this.state.quantity, (this.props.price * this.state.quantity).toFixed(2));
         }, 5000);
       }, 300);
     } else {
@@ -39,9 +40,10 @@ class ShoppingListItem extends React.Component {
   }
 
   handleInputQuantityChange(event) {
-    let newQuantity = parseFloat(event.target.value);
-    if (newQuantity >= 0) {
-      this.setState({ quantity: newQuantity });
+    let itemQuantityTotal = parseFloat(event.target.value);
+    if (itemQuantityTotal >= 0) {
+      this.setState({ quantity: itemQuantityTotal });
+      this.props.updateQuantity(itemQuantityTotal);
     }
   }
 
@@ -59,12 +61,14 @@ class ShoppingListItem extends React.Component {
         {!isDismissed && (
           <tr
             css={css({
+              backgroundColor: isWaiting ? tokens.color.background.light : tokens.color.background.white,
               borderTop: tokens.border.component,
               margin: 0,
-              paddingBottom: tokens.space.xs,
-              paddingLeft: tokens.space.lg,
-              paddingRight: tokens.space.xs,
-              paddingTop: tokens.space.xs,
+              opacity: isWaiting ? 0 : 1,
+              transition: isWaiting ? 'opacity 5s ease-out' : 'opacity .3s linear',
+              '&:last-child': {
+                borderBottom: tokens.border.component,
+              },
               '&:hover': {
                 backgroundColor: tokens.color.background.light,
               },
@@ -72,7 +76,10 @@ class ShoppingListItem extends React.Component {
           >
             <td
               css={css({
-                padding: `${tokens.space.xs}px ${tokens.space.xs}px ${tokens.space.xs}px 0`,
+                paddingBottom: isWaiting ? tokens.space.xxs : tokens.space.xs,
+                paddingRight: tokens.space.xs,
+                paddingTop: isWaiting ? tokens.space.xxs : tokens.space.xs,
+                paddingLeft: 0,
               })}
             >
               {!isWaiting && (
@@ -129,7 +136,7 @@ class ShoppingListItem extends React.Component {
                           {inStock ? (
                             <span css={css({ color: tokens.color.text.success })}>In Stock</span>
                           ) : (
-                            <span css={css({ color: tokens.color.text.warning })}>Backordered</span>
+                            <span css={css({ color: tokens.color.text.warning })}>On Backorder</span>
                           )}
                         </div>
                         <button
@@ -141,54 +148,104 @@ class ShoppingListItem extends React.Component {
                             display: 'block',
                             font: 'inherit',
                             fontSize: tokens.font.size.sm,
-                            margin: `0 0 ${tokens.space.sm}`,
+                            margin: 0,
                             overflow: 'visible',
                             padding: 0,
                             textDecoration: 'none',
                             whiteSpace: 'nowrap',
                             width: 'auto',
                             '&:hover': {
-                              color: isWaiting ? tokens.color.text.success : tokens.color.text.error,
+                              color: tokens.color.text.error,
                               textDecoration: 'underline',
                             }
                           })}
                           onClick={this.handleButtonDeleteClick}
                         >
-                          {isWaiting ? 'undo' : 'remove'}
+                          remove
                         </button>
                     </div>
                   </div>
                 </div>
               )}
+              {isWaiting && (
+                <button
+                  css={css({
+                    background: 'transparent',
+                    border: 'none',
+                    color: tokens.color.text.interactive.default,
+                    cursor: 'pointer',
+                    display: 'block',
+                    font: 'inherit',
+                    fontSize: tokens.font.size.sm,
+                    marginLeft: tokens.space.sm,
+                    overflow: 'visible',
+                    padding: 0,
+                    textDecoration: 'none',
+                    whiteSpace: 'nowrap',
+                    width: 'auto',
+                    '&:hover': {
+                      color: tokens.color.text.success,
+                      textDecoration: 'underline',
+                    }
+                  })}
+                  onClick={this.handleButtonDeleteClick}
+                >
+                  undo
+                </button>
+              )}
             </td>
             <td
               css={css({
                 color: tokens.color.text.tertiary,
-                padding: tokens.space.xs,
                 fontSize: tokens.font.size.sm,
                 fontWeight: 'bold',
+                paddingBottom: isWaiting ? tokens.space.xxs : tokens.space.xs,
+                paddingRight: tokens.space.xs,
+                paddingTop: isWaiting ? tokens.space.xxs : tokens.space.xs,
+                paddingLeft: tokens.space.xs,
               })}
             >
-              ${(price * quantity).toFixed(2)}
+              {!isWaiting && (
+                <span
+                  css={css({
+                    opacity: isDismissing ? 0 : 1,
+                    transition: 'opacity .3s ease-out',
+                  })}
+                >
+                  ${(price * quantity).toFixed(2)}
+                </span>
+              )}
             </td>
             <td
               css={css({
-                padding: tokens.space.xs,
+                paddingBottom: isWaiting ? tokens.space.xxs : tokens.space.xs,
+                paddingRight: tokens.space.xs,
+                paddingTop: isWaiting ? tokens.space.xxs : tokens.space.xs,
+                paddingLeft: tokens.space.xs,
               })}
             >
-              <input
-                css={css({
-                  border: tokens.border.component,
-                  borderRadius: tokens.border.radius.default,
-                  fontSize: tokens.font.size.xs,
-                  padding: tokens.space.xxs,
-                  width: tokens.space.lg,
-                })}
-                min="1"
-                type="number"
-                defaultValue={quantity}
-                onChange={this.handleInputQuantityChange}
-              />
+              {!isWaiting && (
+                <span
+                  css={css({
+                    opacity: isDismissing ? 0 : 1,
+                    transition: 'opacity .3s ease-out',
+                  })}
+                >
+                  <input
+                    css={css({
+                      border: tokens.border.component,
+                      borderRadius: tokens.border.radius.default,
+                      fontSize: tokens.font.size.xs,
+                      padding: tokens.space.xxs,
+                      width: tokens.space.lg,
+                    })}
+                    min="1"
+                    type="number"
+                    defaultValue={quantity}
+                    onChange={this.handleInputQuantityChange}
+                  />
+                </span>
+              )}
             </td>
           </tr>
         )}
@@ -201,15 +258,15 @@ ShoppingListItem.propTypes = {
   inStock: PropTypes.bool,
   name: PropTypes.string.isRequired,
   description: PropTypes.string,
-  price: PropTypes.number,
-  quantity: PropTypes.number
+  price: PropTypes.number.isRequired,
+  quantity: PropTypes.number.isRequired,
 };
 
 ShoppingListItem.defaultProps = {
   inStock: true,
   name: undefined,
   description: undefined,
-  price: 0.00,
+  price: 0,
   quantity: 1,
 };
 

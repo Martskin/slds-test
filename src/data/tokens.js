@@ -44,6 +44,7 @@ module.exports = {
       default: base.color.neutral[3],
       secondary: base.color.neutral[24],
       tertiary: base.color.neutral[33],
+      onInteractive: base.color.white,
       error: base.color.red,
       warning: base.color.orange,
       success: base.color.green,
@@ -54,7 +55,13 @@ module.exports = {
     background: {
       default: base.color.white,
       light: base.color.neutral[97],
+      medium: base.color.neutral[76],
       dark: base.color.black,
+      interactive: {
+        default: base.color.blue[44],
+        hover: base.color.blue[40],
+        disabled: base.color.blue[86],
+      },
     }
   },
   shadow: {
