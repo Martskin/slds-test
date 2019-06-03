@@ -235,7 +235,7 @@ class ShoppingList extends React.Component {
                     textAlign: 'center',
                   })}
                 >
-                  There are currenlty no items in your shopping cart
+                  There are currently no items in your shopping cart
                 </div>
                 <button
                   css={css({
