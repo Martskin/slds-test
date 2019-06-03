@@ -284,7 +284,7 @@ class ShoppingListItem extends React.Component {
                       whiteSpace: 'nowrap',
                       width: tokens.space.lg,
                       '&:hover': {
-                        background: tokens.color.background.interactive.hover,
+                        background: tokens.color.background.error,
                         color: tokens.color.text.onInteractive,
                       }
                     })}

@@ -56,6 +56,7 @@ module.exports = {
       light: base.color.neutral[97],
       medium: base.color.neutral[76],
       dark: base.color.black,
+      error: base.color.red,
       interactive: {
         default: base.color.blue[44],
         hover: base.color.blue[40],
