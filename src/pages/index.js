@@ -20,20 +20,27 @@ const myShoppingListExample = (
     heading="Shopping List"
   >
     <ShoppingList.Item
+    upc={983710}
       name="Astro Camping Hat"
       price={11.99}
     />
     <ShoppingList.Item
+      id="astro-hat-sizzling-summer-edition"
+      upc={983711}
       name="Astro Hat - Sizzling Summer Edition"
       price={8.99}
       description="One size fits all."
       inStock={false}
     />
     <ShoppingList.Item
+      id="astro-beanie-white-winter-edition"
+      upc={983712}
       name="Astro Beanie - White Winter Edition"
       price={9.99}
     />
     <ShoppingList.Item
+      id="astro-beanie-splashing-spring-edition"
+      upc={983713}
       name="Astro Beanie - Splashing Spring Edition"
       price={10.99}
     />

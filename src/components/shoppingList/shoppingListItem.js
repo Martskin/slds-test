@@ -12,6 +12,7 @@ class ShoppingListItem extends React.Component {
       isDismissed: false,
       isWaiting: false,
       quantity: this.props.quantity,
+      price: this.props.price,
     };
     this.handleButtonDeleteClick = this.handleButtonDeleteClick.bind(this);
     this.handleInputQuantityChange = this.handleInputQuantityChange.bind(this);
@@ -23,27 +24,32 @@ class ShoppingListItem extends React.Component {
   }
 
   handleButtonDeleteClick() {
+    const { quantity, price } = this.state;
+    const upc = this.props.upc;
     if (!this.state.isWaiting) {
       this.setState({ isDismissing: true });
       this.waitingTimout = setTimeout(() => {
         this.setState({ isWaiting: true });
+        this.props.removeItem(upc);
         this.dismissingTimout = setTimeout(() => {
           this.setState({ isDismissed: true });
-          this.props.removeItem(this.state.quantity, (this.props.price * this.state.quantity).toFixed(2));
         }, 5000);
       }, 300);
     } else {
       this.setState({ isDismissing: false, isWaiting: false });
       clearTimeout(this.waitingTimout);
       clearTimeout(this.dismissingTimout);
+      this.props.updateItemTotalPrice(upc, (price * quantity));
     }
   }
 
   handleInputQuantityChange(event) {
-    let itemQuantityTotal = parseFloat(event.target.value);
+    const itemQuantityTotal = parseFloat(event.target.value);
+    const itemPriceTotal = parseFloat((this.state.price * itemQuantityTotal).toFixed(2));
+    const upc = this.props.upc;
     if (itemQuantityTotal >= 0) {
       this.setState({ quantity: itemQuantityTotal });
-      this.props.updateQuantity(itemQuantityTotal);
+      this.props.updateItemTotalPrice(upc, itemPriceTotal);
     }
   }
 
@@ -51,6 +57,7 @@ class ShoppingListItem extends React.Component {
     const { isDismissing, isDismissed, isWaiting, quantity } = this.state;
     const {
       inStock,
+      upc,
       name, 
       description,
       price
@@ -102,6 +109,14 @@ class ShoppingListItem extends React.Component {
                     />
                   </div>
                   <div>
+                    <div
+                      css={css({
+                        color: tokens.color.text.tertiary,
+                        fontSize: tokens.font.size.xxs,
+                      })}
+                    >
+                      {upc}
+                    </div>
                     <div
                       css={css({
                         color: tokens.color.text.secondary,
@@ -168,30 +183,43 @@ class ShoppingListItem extends React.Component {
                 </div>
               )}
               {isWaiting && (
-                <button
-                  css={css({
-                    background: 'transparent',
-                    border: 'none',
-                    color: tokens.color.text.interactive.default,
-                    cursor: 'pointer',
-                    display: 'block',
-                    font: 'inherit',
-                    fontSize: tokens.font.size.sm,
-                    marginLeft: tokens.space.sm,
-                    overflow: 'visible',
-                    padding: 0,
-                    textDecoration: 'none',
-                    whiteSpace: 'nowrap',
-                    width: 'auto',
-                    '&:hover': {
-                      color: tokens.color.text.success,
-                      textDecoration: 'underline',
-                    }
-                  })}
-                  onClick={this.handleButtonDeleteClick}
-                >
-                  undo
-                </button>
+                <div>
+                  <button
+                    css={css({
+                      background: 'transparent',
+                      border: 'none',
+                      color: tokens.color.text.interactive.default,
+                      cursor: 'pointer',
+                      display: 'inline-block',
+                      font: 'inherit',
+                      fontSize: tokens.font.size.sm,
+                      marginLeft: tokens.space.sm,
+                      overflow: 'visible',
+                      padding: 0,
+                      textDecoration: 'none',
+                      whiteSpace: 'nowrap',
+                      width: 'auto',
+                      '&:hover': {
+                        color: tokens.color.text.success,
+                        textDecoration: 'underline',
+                      }
+                    })}
+                    onClick={this.handleButtonDeleteClick}
+                  >
+                    undo
+                  </button>
+                  <span
+                    css={css({
+                      color: tokens.color.text.tertiary,
+                      display: 'inline-block',
+                      fontSize: tokens.font.size.xxs,
+                      marginLeft: tokens.space.xs,
+                      verticalAlign: 'middle',
+                    })}
+                  >
+                    ({name})
+                  </span>
+                </div>
               )}
             </td>
             <td
@@ -203,6 +231,7 @@ class ShoppingListItem extends React.Component {
                 paddingRight: tokens.space.xs,
                 paddingTop: isWaiting ? tokens.space.xxs : tokens.space.xs,
                 paddingLeft: tokens.space.xs,
+                textAlign: 'right',
               })}
             >
               {!isWaiting && (
@@ -212,7 +241,7 @@ class ShoppingListItem extends React.Component {
                     transition: 'opacity .3s ease-out',
                   })}
                 >
-                  ${(price * quantity).toFixed(2)}
+                  ${(price * quantity).toLocaleString('en', {useGrouping:true, minimumFractionDigits: 2})}
                 </span>
               )}
             </td>
@@ -235,7 +264,9 @@ class ShoppingListItem extends React.Component {
                     css={css({
                       border: tokens.border.component,
                       borderRadius: tokens.border.radius.default,
+                      display: 'block',
                       fontSize: tokens.font.size.xs,
+                      margin: '0 auto',
                       padding: tokens.space.xxs,
                       width: tokens.space.lg,
                     })}
@@ -256,6 +287,7 @@ class ShoppingListItem extends React.Component {
 
 ShoppingListItem.propTypes = {
   inStock: PropTypes.bool,
+  upc: PropTypes.number.isRequired,
   name: PropTypes.string.isRequired,
   description: PropTypes.string,
   price: PropTypes.number.isRequired,
@@ -264,6 +296,7 @@ ShoppingListItem.propTypes = {
 
 ShoppingListItem.defaultProps = {
   inStock: true,
+  upc: 0,
   name: undefined,
   description: undefined,
   price: 0,

@@ -12,30 +12,44 @@ class ShoppingList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      itemQuantity: this.props.children.length,
+      items: [],
       subTotal: 0,
+      cartEmpty: false,
     };
-    this.updateQuantity = this.updateQuantity.bind(this);
+    this.updateItemTotalPrice = this.updateItemTotalPrice.bind(this);
     this.removeItem = this.removeItem.bind(this);
   }
 
-  componentDidMount() {
-   this.calculateSubTotal();
+  componentWillMount() {
+   this.initState();
   }
 
-  calculateSubTotal() {
-    let { subTotal } = this.state;
+  componentDidMount() {
+    this.calculateSubTotal();
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.lastItemDismissingTimeout);
+  }
+
+  initState() {
+    let { items } = this.state;
     React.Children.map(this.props.children, child => {
-      subTotal = subTotal + child.props.price;
+      let itemObject = {
+        upc: child.props.upc,
+        price: child.props.price,
+      };
+      items = items.concat( itemObject );
+      this.setState({ items });
     });
-    this.setState({ subTotal: subTotal });
   }
 
   renderItems(children) {
     return React.Children.map(children, child => {
       return (
         <ShoppinListItem
-          updateQuantity={this.updateQuantity}
+          key={this.props.upc}
+          updateItemTotalPrice={this.updateItemTotalPrice}
           removeItem={this.removeItem}
           {...child.props}
         />
@@ -43,26 +57,53 @@ class ShoppingList extends React.Component {
     });
   }
 
-  updateQuantity(itemQuantityTotal) {
-    let { itemQuantity } = this.state;
-    let newItemQuantity = itemQuantity;
-    console.log(newItemQuantity, itemQuantity, itemQuantityTotal);
-    // newItemQuantity = (newItemQuantity + newQuantity) - 1;
-    // console.log(itemQuantityTotal, newItemQuantity);
-    this.setState({ itemQuantity: (itemQuantity + 1) });
+  calculateSubTotal() {
+    let { items } = this.state;
+    let subTotal = 0;
+    if (items.length) {
+      for (let i = 0; i < items.length; i++) {
+        subTotal = subTotal + items[i].price;
+        this.setState({ subTotal: subTotal });
+      }
+    } else {
+      this.setState({ subTotal: subTotal });
+      this.lastItemDismissingTimeout = setTimeout(() => {
+        this.setState({ cartEmpty: true });
+      }, 5000);
+    }
   }
 
-  removeItem(itemQuantityTotal, itemPriceTotal) {
-    let { itemQuantity } = this.state;
-    // let newItemQuantity = itemQuantity;
-    // console.log(newItemQuantity, itemQuantity, newQuantity);
-    // newItemQuantity = (newItemQuantity + newQuantity) - 1;
-    // console.log(newQuantity, newItemQuantity);
-    this.setState({ itemQuantity: itemQuantity - itemQuantityTotal });
+  updateItemTotalPrice(upc, itemPriceTotal) {
+    let { items } = this.state;
+    let index = items.findIndex(i => i.upc === upc);
+    clearTimeout(this.lastItemDismissingTimeout);
+    if (items[index]) {
+      items[index].price = itemPriceTotal;
+      this.setState({ items }, () => {
+        this.calculateSubTotal();
+      });
+    } else {
+      let itemObject = {
+        upc: upc,
+        price: itemPriceTotal,
+      };
+      items = items.concat( itemObject );
+      this.setState({ items }, () => {
+        this.calculateSubTotal();
+      });
+    }
+  }
+
+  removeItem(upc) {
+    let { items } = this.state;
+    let index = items.findIndex(i => i.upc === upc);
+    items.splice(index, 1);
+    this.setState({ items });
+    this.calculateSubTotal();
   }
 
   render() {
-    const { itemQuantity, subTotal } = this.state;
+    const { items, subTotal, cartEmpty } = this.state;
     const { heading, children } = this.props;
 
     return (
@@ -115,7 +156,7 @@ class ShoppingList extends React.Component {
               width: '60%',
             })}
           >
-            {children ? (
+            {!cartEmpty ? (
               <table
                 css={css({
                   borderCollapse: 'collapse',
@@ -140,6 +181,8 @@ class ShoppingList extends React.Component {
                     <td
                       css={css({
                         padding: tokens.space.xs,
+                        width: '15%',
+                        textAlign: 'right',
                       })}
                     >
                       Price
@@ -147,6 +190,8 @@ class ShoppingList extends React.Component {
                     <td
                       css={css({
                         padding: tokens.space.xs,
+                        width: '15%',
+                        textAlign: 'center',
                       })}
                     >
                       Quantity
@@ -234,11 +279,11 @@ class ShoppingList extends React.Component {
                 marginBottom: tokens.space.md,
               })}
             >
-              Subtotal ({itemQuantity} items) ${subTotal.toFixed(2)}
+              Subtotal ({items.length} items) ${subTotal.toLocaleString('en', {useGrouping:true, minimumFractionDigits: 2})}
             </div>
             <button
               css={css({
-                background: itemQuantity <= 0 ? tokens.color.background.interactive.disabled : tokens.color.background.interactive.default,
+                background: items.length <= 0 ? tokens.color.background.interactive.disabled : tokens.color.background.interactive.default,
                 borderRadius: tokens.border.radius.default,
                 border: 'none',
                 color: tokens.color.text.onInteractive,
@@ -250,7 +295,7 @@ class ShoppingList extends React.Component {
                 margin: 0,
                 overflow: 'visible',
                 padding: `${tokens.space.sm}px ${tokens.space.md}px`,
-                pointerEvents: itemQuantity <= 0 ? 'none' : 'initial',
+                pointerEvents: items.length <= 0 ? 'none' : 'initial',
                 textDecoration: 'none',
                 whiteSpace: 'nowrap',
                 width: 'auto',
@@ -259,7 +304,7 @@ class ShoppingList extends React.Component {
                   color: tokens.color.text.onInteractive,
                 }
               })}
-              disabled={itemQuantity <= 0}
+              disabled={items.length <= 0}
             >
               Proceed to checkout
             </button>

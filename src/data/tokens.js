@@ -30,7 +30,7 @@ module.exports = {
       'serif': "Helvetica Neue, Helvetica, Arial, sans-serif",
     },
     size: {
-      xxs: base.space.default * .25,
+      xxs: base.space.default * .625,
       xs: base.space.default * .75,
       sm: base.space.default * .875,
       md: base.space.default,
