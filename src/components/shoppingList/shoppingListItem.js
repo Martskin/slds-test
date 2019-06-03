@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import tokens from "../../data/tokens"
 import { css } from "@emotion/core"
-import productDefaultImage from "../../images/product-default-image.jpg"
+import productDefaultImage from "../../images/product-default-image.png"
 
 class ShoppingListItem extends React.Component {
   constructor(props) {
@@ -56,6 +56,7 @@ class ShoppingListItem extends React.Component {
   render() {
     const { isDismissing, isDismissed, isWaiting, quantity } = this.state;
     const {
+      variant,
       inStock,
       upc,
       name, 
@@ -73,6 +74,7 @@ class ShoppingListItem extends React.Component {
               margin: 0,
               opacity: isWaiting ? 0 : 1,
               transition: isWaiting ? 'opacity 5s ease-out' : 'opacity .3s linear',
+              verticalAlign: 'top',
               '&:last-child': {
                 borderBottom: tokens.border.component,
               },
@@ -154,30 +156,32 @@ class ShoppingListItem extends React.Component {
                             <span css={css({ color: tokens.color.text.warning })}>On Backorder</span>
                           )}
                         </div>
-                        <button
-                          css={css({
-                            background: 'transparent',
-                            border: 'none',
-                            color: tokens.color.text.interactive.default,
-                            cursor: 'pointer',
-                            display: 'block',
-                            font: 'inherit',
-                            fontSize: tokens.font.size.sm,
-                            margin: 0,
-                            overflow: 'visible',
-                            padding: 0,
-                            textDecoration: 'none',
-                            whiteSpace: 'nowrap',
-                            width: 'auto',
-                            '&:hover': {
-                              color: tokens.color.text.error,
-                              textDecoration: 'underline',
-                            }
-                          })}
-                          onClick={this.handleButtonDeleteClick}
-                        >
-                          remove
-                        </button>
+                        {variant === 'default' && (
+                          <button
+                            css={css({
+                              background: 'transparent',
+                              border: 'none',
+                              color: tokens.color.text.interactive.default,
+                              cursor: 'pointer',
+                              display: 'block',
+                              font: 'inherit',
+                              fontSize: tokens.font.size.sm,
+                              margin: 0,
+                              overflow: 'visible',
+                              padding: 0,
+                              textDecoration: 'none',
+                              whiteSpace: 'nowrap',
+                              width: 'auto',
+                              '&:hover': {
+                                color: tokens.color.text.error,
+                                textDecoration: 'underline',
+                              }
+                            })}
+                            onClick={this.handleButtonDeleteClick}
+                          >
+                            remove
+                          </button>
+                        )}
                     </div>
                   </div>
                 </div>
@@ -213,7 +217,7 @@ class ShoppingListItem extends React.Component {
                       color: tokens.color.text.tertiary,
                       display: 'inline-block',
                       fontSize: tokens.font.size.xxs,
-                      marginLeft: tokens.space.xs,
+                      marginLeft: tokens.space.sm,
                       verticalAlign: 'middle',
                     })}
                   >
@@ -245,6 +249,49 @@ class ShoppingListItem extends React.Component {
                 </span>
               )}
             </td>
+            {variant === 'narrow' && (
+              <td
+                css={css({
+                  fontSize: tokens.font.size.sm,
+                  paddingBottom: isWaiting ? tokens.space.xxs : tokens.space.xs,
+                  paddingRight: tokens.space.xs,
+                  paddingTop: isWaiting ? tokens.space.xxs : tokens.space.xs,
+                  paddingLeft: tokens.space.xs,
+                })}
+              >
+                {!isWaiting && (
+                  <button
+                    css={css({
+                      background: tokens.color.background.interactive.default,
+                      borderRadius: tokens.border.radius.default,
+                      border: 'none',
+                      color: tokens.color.text.onInteractive,
+                      cursor: 'pointer',
+                      display: 'block',
+                      font: 'inherit',
+                      fontSize: tokens.font.size.md,
+                      fontWeight: 'bold',
+                      height: tokens.space.lg,
+                      lineHeight: 0,
+                      margin: 0,
+                      overflow: 'visible',
+                      padding: 0,
+                      textDecoration: 'none',
+                      whiteSpace: 'nowrap',
+                      width: tokens.space.lg,
+                      '&:hover': {
+                        background: tokens.color.background.interactive.hover,
+                        color: tokens.color.text.onInteractive,
+                      }
+                    })}
+                    onClick={this.handleButtonDeleteClick}
+                    aria-label="remove this item from cart"
+                  >
+                    X
+                  </button>
+                )}
+              </td>
+            )}
             <td
               css={css({
                 paddingBottom: isWaiting ? tokens.space.xxs : tokens.space.xs,

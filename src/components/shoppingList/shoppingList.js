@@ -51,6 +51,7 @@ class ShoppingList extends React.Component {
           key={this.props.upc}
           updateItemTotalPrice={this.updateItemTotalPrice}
           removeItem={this.removeItem}
+          variant={this.props.variant}
           {...child.props}
         />
       );
@@ -104,7 +105,7 @@ class ShoppingList extends React.Component {
 
   render() {
     const { items, subTotal, cartEmpty } = this.state;
-    const { heading, children } = this.props;
+    const { heading, variant, children } = this.props;
 
     return (
       <div
@@ -142,18 +143,18 @@ class ShoppingList extends React.Component {
         </div>
         <div
           css={css({
-            display: 'flex',
+            display: variant === 'narrow' ? 'block' : 'flex',
             marginBottom: tokens.space.md,
           })}
         >
           <div
             css={css({
-              borderRight: tokens.border.component,
+              borderRight: variant === 'narrow' ? 'none' : tokens.border.component,
               paddingBottom: tokens.space.md,
               paddingLeft: 0,
-              paddingRight: tokens.space.md,
+              paddingRight: variant === 'narrow' ? 0 : tokens.space.md,
               paddingTop: tokens.space.md,
-              width: '60%',
+              width: variant === 'narrow' ? 'auto' : '60%',
             })}
           >
             {!cartEmpty ? (
@@ -163,41 +164,43 @@ class ShoppingList extends React.Component {
                   width: '100%',
                 })}
               >
-                <thead>
-                  <tr
-                    css={css({
-                      color: tokens.color.text.tertiary,
-                      fontSize: tokens.font.size.sm,
-                      verticalAlign: 'top',
-                    })}
-                  >
-                    <td
+                {variant === 'default' && (
+                  <thead>
+                    <tr
                       css={css({
-                        padding: tokens.space.xs,
+                        color: tokens.color.text.tertiary,
+                        fontSize: tokens.font.size.sm,
+                        verticalAlign: 'top',
                       })}
                     >
-                      Product
-                    </td>
-                    <td
-                      css={css({
-                        padding: tokens.space.xs,
-                        width: '15%',
-                        textAlign: 'right',
-                      })}
-                    >
-                      Price
-                    </td>
-                    <td
-                      css={css({
-                        padding: tokens.space.xs,
-                        width: '15%',
-                        textAlign: 'center',
-                      })}
-                    >
-                      Quantity
-                    </td>
-                  </tr>
-                </thead>
+                      <td
+                        css={css({
+                          padding: tokens.space.xs,
+                        })}
+                      >
+                        Product
+                      </td>
+                      <td
+                        css={css({
+                          padding: tokens.space.xs,
+                          width: '15%',
+                          textAlign: 'right',
+                        })}
+                      >
+                        Price
+                      </td>
+                      <td
+                        css={css({
+                          padding: tokens.space.xs,
+                          width: '15%',
+                          textAlign: 'center',
+                        })}
+                      >
+                        Quantity
+                      </td>
+                    </tr>
+                  </thead>
+                )}
                 <tbody>
                   {this.renderItems(children)}
                 </tbody>
@@ -268,7 +271,7 @@ class ShoppingList extends React.Component {
           <div
             css={css({
               paddingBottom: tokens.space.md,
-              paddingLeft: tokens.space.md,
+              paddingLeft: variant === 'narrow' ? 0 : tokens.space.md,
               paddingRight: 0,
               paddingTop: tokens.space.md,
             })}
@@ -298,7 +301,7 @@ class ShoppingList extends React.Component {
                 pointerEvents: items.length <= 0 ? 'none' : 'initial',
                 textDecoration: 'none',
                 whiteSpace: 'nowrap',
-                width: 'auto',
+                width: variant === 'narrow' ? '100%' : 'auto',
                 '&:hover': {
                   background: tokens.color.background.interactive.hover,
                   color: tokens.color.text.onInteractive,
@@ -317,11 +320,13 @@ class ShoppingList extends React.Component {
 
 ShoppingList.propTypes = {
   heading: PropTypes.string,
+  variant: PropTypes.oneOf(['default', 'narrow']),
   children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]),
 }
 
 ShoppingList.defaultProps = {
   heading: undefined,
+  variant: 'default',
   children: undefined
 }
 

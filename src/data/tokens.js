@@ -79,7 +79,7 @@ module.exports = {
   layout: {
     maxWidth: {
       default: 1024,
-      small: 320
+      small: 414
     },
   },
   border: {
