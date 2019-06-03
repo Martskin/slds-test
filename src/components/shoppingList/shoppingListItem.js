@@ -122,9 +122,13 @@ class ShoppingListItem extends React.Component {
                     <div
                       css={css({
                         color: tokens.color.text.secondary,
-                        fontSize: tokens.font.size.md,
+                        fontSize: variant === 'narrow' ? tokens.font.size.sm : tokens.font.size.md,
                         fontWeight: 'bold',
                         marginBottom: tokens.space.xxs,
+                        maxWidth: variant === 'narrow' ? '140px' : 'none',
+                        overflow: variant === 'narrow' ? 'hidden' : 'initial',
+                        textOverflow: variant === 'narrow' ? 'ellipsis' : 'none',
+                        whiteSpace: variant === 'narrow' ? 'nowrap' : 'initial',
                       })}
                     >
                       {name}
