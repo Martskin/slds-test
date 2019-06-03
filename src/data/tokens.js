@@ -27,7 +27,6 @@ module.exports = {
   font: {
     family: {
       'sansSerif': "Helvetica Neue, Helvetica, Arial, sans-serif",
-      'serif': "Helvetica Neue, Helvetica, Arial, sans-serif",
     },
     size: {
       xxs: base.space.default * .625,
