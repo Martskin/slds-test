@@ -157,7 +157,7 @@ class ShoppingList extends React.Component {
               width: variant === 'narrow' ? 'auto' : '60%',
             })}
           >
-            {!cartEmpty ? (
+            {!cartEmpty && (
               <table
                 css={css({
                   borderCollapse: 'collapse',
@@ -205,7 +205,8 @@ class ShoppingList extends React.Component {
                   {this.renderItems(children)}
                 </tbody>
               </table>
-            ) : (
+            )}
+            {items.length <= 0 && (
               <div
                 css={css({
                   marginBottom: tokens.space.md,
