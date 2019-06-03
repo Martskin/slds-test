@@ -282,7 +282,7 @@ class ShoppingList extends React.Component {
                 marginBottom: tokens.space.md,
               })}
             >
-              Subtotal ({items.length} item{ items.length > 1 ? 's' : null}) ${subTotal.toLocaleString('en', {useGrouping:true, minimumFractionDigits: 2})}
+              Subtotal ({items.length} item{ items.length !== 1 ? 's' : null}) ${subTotal.toLocaleString('en', {useGrouping:true, minimumFractionDigits: 2})}
             </div>
             <button
               css={css({
